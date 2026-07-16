@@ -35,13 +35,21 @@ body{margin:0;padding:28px 18px;background:var(--bg);color:var(--ink);
 .top p{margin:5px 0 0;color:var(--soft);font-size:13px}
 
 /* meta */
-.meta{padding-top:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:20px 26px}
+.meta{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;padding:24px 26px 20px}
 .meta label{display:block;font-size:12px;color:var(--soft);margin-bottom:6px}
 .meta input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;
   font-family:inherit;font-size:14px;color:var(--ink);background:#fff;transition:border-color .15s}
 .meta input:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-l)}
 .meta input::placeholder{color:#b9bfc8}
 .dprint{display:none}
+.meta .dlv{position:relative}
+.meta .dlv input{border-color:#cfd6e0}
+.due-note{display:block;margin-top:5px;font-size:11px;font-weight:600;min-height:14px}
+.due-note.ok{color:var(--green)}
+.due-note.warn{color:var(--g-stk)}
+.due-note.late{color:var(--red)}
+.meta .dlv input.late{border-color:var(--red);background:#fef6f6}
+.meta .dlv input.warn{border-color:var(--g-stk);background:#fffaf2}
 
 /* toolbar */
 .bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:0 26px 16px;border-bottom:1px solid var(--line)}
@@ -161,6 +169,7 @@ h3{margin:0;font-size:13px;font-weight:600;color:var(--soft)}
 .btn-print:hover{background:#2c3745}
 .sign{display:none}
 
+@media (max-width:1100px){.meta{grid-template-columns:repeat(3,1fr)}}
 @media (max-width:820px){.meta{grid-template-columns:1fr 1fr}}
 
 @media print{
@@ -184,6 +193,8 @@ h3{margin:0;font-size:13px;font-weight:600;color:var(--soft)}
   .meta input{border:0;padding:0;width:auto;min-width:70px;font-weight:700;font-size:12px;color:#000}
   .meta input[type=date]{display:none}
   .meta .dprint{display:inline!important;font-weight:700;font-size:12px}
+  .due-note{display:none!important}
+  .meta .dlv input.late,.meta .dlv input.warn{background:transparent!important;border:0!important}
   .meta input::-webkit-calendar-picker-indicator{display:none}
 
   /* الجدول */
@@ -441,6 +452,8 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
     <div><label>اسم السيلز</label><input id="sales" placeholder="اكتب اسم السيلز"></div>
     <div><label>التاريخ</label><input type="date" id="dt"><span class="dprint" id="dtP"></span></div>
     <div><label>رقم الأوردر</label><input id="ono" placeholder="مثال: 001"></div>
+    <div class="dlv"><label for="due">تاريخ التسليم</label><input type="date" id="due"><span class="dprint" id="dueP"></span>
+      <span class="due-note" id="dueN"></span></div>
   </div>
 
   <div class="bar">
@@ -667,17 +680,40 @@ function calc(){
 function doPrint(){
  const d=$('dt').value;
  $('dtP').textContent = d ? new Date(d).toLocaleDateString('en-GB') : '................';
+ const dv=$('due').value;
+ $('dueP').textContent = dv ? new Date(dv).toLocaleDateString('en-GB') : '................';
  ['cust','sales','ono'].forEach(id=>{ const el=$(id);
    if(!el.value.trim()) el.placeholder='................'; });
  window.print();
 }
 
 function clearAll(){ if(!confirm('هيمسح كل المنتجات ويبدأ أوردر جديد. تمام؟'))return;
- body.innerHTML=''; ['cust','sales','ono'].forEach(i=>$(i).value='');
+ body.innerHTML=''; ['cust','sales','ono','due'].forEach(i=>$(i).value=''); dueCheck();
  for(let i=0;i<5;i++) addRow();}
+
+function dueCheck(){
+ const el=$('due'), note=$('dueN'), v=el.value;
+ el.classList.remove('late','warn'); note.className='due-note';
+ if(!v){note.textContent=''; return;}
+ const t=new Date(); t.setHours(0,0,0,0);
+ const d=new Date(v+'T00:00:00');
+ const days=Math.round((d-t)/864e5);
+ const ar=d.toLocaleDateString('ar-EG',{weekday:'long'});
+ if(days<0){ el.classList.add('late'); note.className='due-note late';
+   note.textContent=`⚠ فات المعاد بـ ${Math.abs(days)} يوم`; }
+ else if(days===0){ el.classList.add('warn'); note.className='due-note warn';
+   note.textContent='التسليم النهاردة'; }
+ else if(days<=3){ el.classList.add('warn'); note.className='due-note warn';
+   note.textContent=`${ar} · باقي ${days} ${days===1?'يوم':'أيام'}`; }
+ else { note.className='due-note ok';
+   note.textContent=`${ar} · باقي ${days} يوم`; }
+}
+$('due').addEventListener('change',dueCheck);
+$('due').addEventListener('input',dueCheck);
 
 chips(); SAMPLE.forEach(addRow);
 $('dt').valueAsDate=new Date();
+{const d=new Date(); d.setDate(d.getDate()+7); $('due').valueAsDate=d;} dueCheck();
 calc();
 </script>
 </body>
