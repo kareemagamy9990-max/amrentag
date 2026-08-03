@@ -68,6 +68,8 @@ body{margin:0;padding:28px 18px;background:var(--bg);color:var(--ink);
 .btn{border:0;border-radius:8px;padding:8px 14px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
 .btn-p{background:var(--blue);color:#fff}
 .btn-s{background:var(--bg);color:var(--ink)}
+.btn-ok{background:var(--green);color:#fff}
+.btn:disabled{opacity:.7;cursor:default}
 .btn:hover{filter:brightness(.96)}
 
 /* table */
@@ -344,6 +346,15 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
 .slot p{margin:0;font-size:12.5px;max-width:340px;line-height:1.7}
 .view[hidden]{display:none}
 
+/* جدول الأوردرات المحفوظة */
+.ord-table{width:100%;border-collapse:collapse;font-size:13px}
+.ord-table th{text-align:right;color:var(--soft);font-size:11.5px;font-weight:600;
+  padding:11px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.ord-table td{padding:11px 8px;border-bottom:1px solid #f1f3f6;text-align:right;white-space:nowrap}
+.ord-table tr:hover td{background:#fcfcfd}
+.ord-table .btn{padding:6px 12px;font-size:12px}
+.ord-empty-hint{color:var(--soft);font-size:12px}
+
 @media (max-width:960px){
   .sb{position:fixed;z-index:40;inset-inline-start:0;transform:translateX(0);
     box-shadow:0 0 40px rgba(0,0,0,.25)}
@@ -382,6 +393,10 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
       <button class="nav-i" aria-current="page" onclick="go('order',this)">
         <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
         <span class="lbl">أوردر الإنتاج</span><span class="tag">شغال</span>
+      </button>
+      <button class="nav-i" onclick="go('orders',this)">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span class="lbl">الأوردرات المحفوظة</span><span class="tag" id="ordersTag">0</span>
       </button>
       <button class="nav-i" disabled aria-disabled="true">
         <svg viewBox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
@@ -439,12 +454,12 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
     </header>
 
     <main class="page">
+      <section class="view" id="v-order">
       <div class="page-h">
         <div><h2>أوردر الإنتاج</h2><p>سجّل الأصناف والكميات، والنظام يحسب الإنتاج والاستيكر أوتوماتيك.</p></div>
         <span class="push status"><i></i>مسودة</span>
       </div>
 
-      <section class="view" id="v-order">
 <div class="card">
 
   <div class="meta">
@@ -468,6 +483,7 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
     <button class="btn btn-s" onclick="addLine()">+ خط</button>
     <span class="push">
       <button class="btn btn-p" onclick="addRow()">+ منتج</button>
+      <button class="btn btn-ok" id="saveOrderBtn" onclick="saveOrder()">حفظ الأوردر</button>
       <button class="btn btn-s" onclick="clearAll()">أوردر جديد</button>
     </span>
   </div>
@@ -537,6 +553,16 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
   <div class="sign"><div>السيلز</div><div>مسئول الإنتاج</div><div>مدير المصنع</div></div>
 </div>
       </section>
+
+      <section class="view" id="v-orders" hidden>
+        <div class="page-h">
+          <div><h2>الأوردرات المحفوظة</h2><p>كل الأوردرات اللي حفظتها. افتح أي واحد للتعديل، أو ابدأ أوردر جديد.</p></div>
+          <span class="push"><button class="btn btn-p" onclick="newOrder()">+ أوردر جديد</button></span>
+        </div>
+        <div class="card" style="padding:8px 22px 22px">
+          <div id="ordersList"></div>
+        </div>
+      </section>
     </main>
   </div>
 </div>
@@ -544,8 +570,11 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
 <script>
 function go(view,btn){
   document.querySelectorAll('#nav .nav-i').forEach(b=>b.removeAttribute('aria-current'));
-  btn.setAttribute('aria-current','page');
-  document.getElementById('crumb').textContent=btn.querySelector('.lbl').textContent;
+  if(btn) btn.setAttribute('aria-current','page');
+  document.getElementById('v-order').hidden = view!=='order';
+  document.getElementById('v-orders').hidden = view!=='orders';
+  document.getElementById('crumb').textContent = view==='orders' ? 'الأوردرات المحفوظة' : 'أوردر الإنتاج';
+  if(view==='orders') renderOrdersList();
   document.body.classList.remove('open');
 }
 document.getElementById('q').addEventListener('input',e=>{
@@ -628,6 +657,123 @@ function drag(tr){
   body.insertBefore(dg,(e.clientY-b.top)>b.height/2?tr.nextSibling:tr);});
 }
 
+/* ===== حفظ واسترجاع البيانات (localStorage) ===== */
+const STORE_KEY='erp_production_order_v1';
+function getState(){
+ return{
+  cust:$('cust').value, sales:$('sales').value, ono:$('ono').value,
+  dt:$('dt').value, due:$('due').value, unit:UNIT, lines:LINES,
+  rows:[...body.rows].map(tr=>({
+   d:tr.querySelector('.desc input').value,
+   g:num(tr.querySelector('.g').value),
+   s:num(tr.querySelector('.s').value),
+   u:num(tr.querySelector('.u').value),
+   q:num(tr.querySelector('.q').value),
+   so:tr.querySelector('.so').checked,
+   line:tr.querySelector('.line').value,
+   n:tr.querySelector('.notes input').value
+  }))
+ };
+}
+function saveState(){ try{ const s=getState(); s._editingOrderId=editingOrderId||null; localStorage.setItem(STORE_KEY, JSON.stringify(s)); }catch(e){} }
+function loadState(){ try{ const raw=localStorage.getItem(STORE_KEY); return raw?JSON.parse(raw):null; }catch(e){ return null; } }
+
+/* ===== قائمة الأوردرات المحفوظة (تابة "الأوردرات المحفوظة") ===== */
+const ORDERS_KEY='erp_orders_list_v1';
+let editingOrderId=null;
+function loadOrders(){ try{ return JSON.parse(localStorage.getItem(ORDERS_KEY)||'[]'); }catch(e){ return []; } }
+function saveOrders(list){ try{ localStorage.setItem(ORDERS_KEY, JSON.stringify(list)); }catch(e){} }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function updateOrdersTag(){ const t=$('ordersTag'); if(t) t.textContent=loadOrders().length; }
+
+function summarizeState(state){
+ let tG=0,tS=0;
+ (state.rows||[]).forEach(r=>{ const pcs=(r.u||0)*(r.q||0); tG+=(r.g||0)*(r.s||0)*pcs; if(r.so) tS+=pcs; });
+ return{tG,tS};
+}
+
+function saveOrder(){
+ const state=getState();
+ const list=loadOrders();
+ const sm=summarizeState(state);
+ const id=editingOrderId||('o'+Date.now());
+ const rec=Object.assign({},state,{id,totalProd:sm.tG,totalStk:sm.tS,savedAt:new Date().toISOString()});
+ const idx=list.findIndex(o=>o.id===id);
+ if(idx>=0) list[idx]=rec; else list.unshift(rec);
+ saveOrders(list); editingOrderId=id; updateOrdersTag(); flashSaved();
+}
+
+function flashSaved(){
+ const btn=$('saveOrderBtn'); if(!btn) return;
+ const old=btn.textContent; btn.textContent='اتحفظ ✓'; btn.disabled=true;
+ setTimeout(()=>{btn.textContent=old; btn.disabled=false;},1200);
+}
+
+function applyState(state){
+ $('cust').value=state.cust||''; $('sales').value=state.sales||''; $('ono').value=state.ono||'';
+ if(state.dt) $('dt').value=state.dt; else $('dt').valueAsDate=new Date();
+ if(state.due) $('due').value=state.due; else{const d=new Date(); d.setDate(d.getDate()+7); $('due').valueAsDate=d;}
+ if(Array.isArray(state.lines)&&state.lines.length) LINES=state.lines;
+ chips();
+ body.innerHTML='';
+ (Array.isArray(state.rows)&&state.rows.length?state.rows:SAMPLE).forEach(addRow);
+ setUnit(state.unit||'kg');
+ dueCheck(); calc();
+}
+
+function openOrder(id){
+ const rec=loadOrders().find(o=>o.id===id); if(!rec) return;
+ editingOrderId=id; applyState(rec);
+ go('order', document.querySelector('#nav .nav-i'));
+}
+
+function deleteOrder(id,ev){
+ if(ev) ev.stopPropagation();
+ if(!confirm('هيمسح الأوردر ده نهائي، مش هينفع ترجعله. متأكد؟')) return;
+ const list=loadOrders().filter(o=>o.id!==id);
+ saveOrders(list); if(editingOrderId===id) editingOrderId=null;
+ updateOrdersTag(); renderOrdersList();
+}
+
+function newOrder(){
+ if(!confirm('هيفتحلك أوردر جديد فاضي. الأوردر الحالي محفوظ عندك لو كنت حفظته قبل كده. تمام؟')) return;
+ editingOrderId=null; body.innerHTML='';
+ ['cust','sales','ono'].forEach(i=>$(i).value='');
+ $('dt').valueAsDate=new Date();
+ {const d=new Date(); d.setDate(d.getDate()+7); $('due').valueAsDate=d;}
+ dueCheck();
+ for(let i=0;i<5;i++) addRow();
+ go('order', document.querySelector('#nav .nav-i'));
+}
+
+function renderOrdersList(){
+ const list=loadOrders(); const cont=$('ordersList');
+ if(!list.length){
+  cont.innerHTML=`<div class="slot"><b>لسه مفيش أوردرات محفوظة</b><p>لما تحفظ أي أوردر من صفحة «أوردر الإنتاج» بزرار «حفظ الأوردر»، هيظهر هنا وتقدر تفتحه وتعدل عليه في أي وقت.</p></div>`;
+  return;
+ }
+ cont.innerHTML=`<div class="scroll"><table class="ord-table"><thead><tr>
+   <th>رقم الأوردر</th><th>العميل</th><th>السيلز</th><th>التاريخ</th><th>التسليم</th>
+   <th>الإنتاج</th><th>الاستيكر</th><th>آخر حفظ</th><th></th>
+ </tr></thead><tbody>${list.map(o=>{
+   const sm={tG:o.totalProd||0,tS:o.totalStk||0};
+   const saved=new Date(o.savedAt);
+   return `<tr onclick="openOrder('${o.id}')" style="cursor:pointer">
+     <td>${o.ono?esc(o.ono):'—'}</td>
+     <td>${o.cust?esc(o.cust):'—'}</td>
+     <td>${o.sales?esc(o.sales):'—'}</td>
+     <td>${o.dt?new Date(o.dt+'T00:00:00').toLocaleDateString('en-GB'):'—'}</td>
+     <td>${o.due?new Date(o.due+'T00:00:00').toLocaleDateString('en-GB'):'—'}</td>
+     <td>${f(sm.tG/1000,2)} كجم</td>
+     <td>${f(sm.tS,0)}</td>
+     <td>${saved.toLocaleDateString('ar-EG',{day:'numeric',month:'short'})} · ${saved.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})}</td>
+     <td><button class="btn btn-s" onclick="event.stopPropagation();openOrder('${o.id}')">فتح للتعديل</button>
+         <button class="del" title="حذف" onclick="deleteOrder('${o.id}',event)">×</button></td>
+   </tr>`;
+ }).join('')}</tbody></table></div>`;
+}
+function clearSaved(){ try{ localStorage.removeItem(STORE_KEY); }catch(e){} }
+
 function calc(){
  let tQ=0,tP=0,tG=0,tS=0,items=0,sRows=0; const L={};
  [...body.rows].forEach((tr,i)=>{
@@ -675,6 +821,8 @@ function calc(){
      <div class="bar"><i style="width:${v/max*100}%;background:${lc(k)}"></i></div>
    </div>`).join('')
   : `<div class="tile empty"><div class="t">لسه مفيش إنتاج</div><div class="v">—</div><div class="u">املا الجدول فوق</div></div>`;
+
+ saveState();
 }
 
 function doPrint(){
@@ -688,6 +836,7 @@ function doPrint(){
 }
 
 function clearAll(){ if(!confirm('هيمسح كل المنتجات ويبدأ أوردر جديد. تمام؟'))return;
+ editingOrderId=null;
  body.innerHTML=''; ['cust','sales','ono','due'].forEach(i=>$(i).value=''); dueCheck();
  for(let i=0;i<5;i++) addRow();}
 
@@ -707,14 +856,21 @@ function dueCheck(){
    note.textContent=`${ar} · باقي ${days} ${days===1?'يوم':'أيام'}`; }
  else { note.className='due-note ok';
    note.textContent=`${ar} · باقي ${days} يوم`; }
+ saveState();
 }
 $('due').addEventListener('change',dueCheck);
 $('due').addEventListener('input',dueCheck);
+['cust','sales','ono','dt'].forEach(id=>{
+ $(id).addEventListener('input',saveState);
+ $(id).addEventListener('change',saveState);
+});
 
-chips(); SAMPLE.forEach(addRow);
-$('dt').valueAsDate=new Date();
-{const d=new Date(); d.setDate(d.getDate()+7); $('due').valueAsDate=d;} dueCheck();
-calc();
+(function init(){
+ const saved=loadState();
+ if(saved) editingOrderId=saved._editingOrderId||null;
+ applyState(saved || {cust:'',sales:'',ono:'',dt:'',due:'',unit:'kg',lines:LINES,rows:SAMPLE});
+ updateOrdersTag();
+})();
 </script>
 </body>
 </html>
