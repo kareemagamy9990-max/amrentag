@@ -375,6 +375,38 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
 }
 
 </style>
+
+<!-- ============================================
+  ربط Firebase (لازم تعمل مشروع مجاني على firebase.google.com
+  وتحط بياناته هنا بدل القيم دي عشان الحفظ يشتغل من أي جهاز)
+============================================ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, doc, setDoc, deleteDoc,
+    onSnapshot, query, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // 👇 غيّر القيم دي ببيانات مشروعك على Firebase (Project settings → Your apps → Config)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAuGlShJj1aG1oaoDkLvN-1QsnwWSMWliM",
+    authDomain: "amrentag-fd022.firebaseapp.com",
+    projectId: "amrentag-fd022",
+    storageBucket: "amrentag-fd022.firebasestorage.app",
+    messagingSenderId: "720577868280",
+    appId: "1:720577868280:web:19f4d6d219207b35a1e60d"
+  };
+
+  try{
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    window.db = db;
+    window.fbFns = { collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy };
+    window.dispatchEvent(new Event('firebase-ready'));
+  }catch(e){
+    console.error('Firebase init failed:', e);
+  }
+</script>
 </head>
 <body class="erp">
 <div class="shell">
@@ -678,13 +710,32 @@ function getState(){
 function saveState(){ try{ const s=getState(); s._editingOrderId=editingOrderId||null; localStorage.setItem(STORE_KEY, JSON.stringify(s)); }catch(e){} }
 function loadState(){ try{ const raw=localStorage.getItem(STORE_KEY); return raw?JSON.parse(raw):null; }catch(e){ return null; } }
 
-/* ===== قائمة الأوردرات المحفوظة (تابة "الأوردرات المحفوظة") ===== */
-const ORDERS_KEY='erp_orders_list_v1';
+/* ===== قائمة الأوردرات المحفوظة (سحابيًا على Firebase - تتزامن على كل الأجهزة) ===== */
+const ORDERS_COLLECTION='production_orders';
 let editingOrderId=null;
-function loadOrders(){ try{ return JSON.parse(localStorage.getItem(ORDERS_KEY)||'[]'); }catch(e){ return []; } }
-function saveOrders(list){ try{ localStorage.setItem(ORDERS_KEY, JSON.stringify(list)); }catch(e){} }
+let ordersCache=[];
+let ordersReady=false;
+
+function loadOrders(){ return ordersCache; } // بيرجع آخر نسخة وصلت من السحابة
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function updateOrdersTag(){ const t=$('ordersTag'); if(t) t.textContent=loadOrders().length; }
+function updateOrdersTag(){ const t=$('ordersTag'); if(t) t.textContent=ordersCache.length; }
+
+function initOrdersListener(){
+  if(!window.db || !window.fbFns) return;
+  const {collection,onSnapshot,query,orderBy}=window.fbFns;
+  const q=query(collection(window.db,ORDERS_COLLECTION), orderBy('savedAt','desc'));
+  onSnapshot(q, snap=>{
+    ordersCache = snap.docs.map(d=>d.data());
+    ordersReady = true;
+    updateOrdersTag();
+    renderOrdersList();
+  }, err=>{
+    console.error('Firestore listen error:', err);
+    const cont=$('ordersList');
+    if(cont) cont.innerHTML=`<div class="slot"><b>مقدرناش نجيب الأوردرات</b><p>تأكد إن بيانات Firebase (firebaseConfig) اتحطت صح في أول الصفحة، وإن قواعد Firestore بتسمح بالقراءة/الكتابة.</p></div>`;
+  });
+}
+window.addEventListener('firebase-ready', initOrdersListener);
 
 function summarizeState(state){
  let tG=0,tS=0;
@@ -693,14 +744,16 @@ function summarizeState(state){
 }
 
 function saveOrder(){
+ if(!window.db || !window.fbFns){ alert('لسه الاتصال بقاعدة البيانات مش جاهز، جرب تاني بعد ثانية.'); return; }
  const state=getState();
- const list=loadOrders();
  const sm=summarizeState(state);
  const id=editingOrderId||('o'+Date.now());
  const rec=Object.assign({},state,{id,totalProd:sm.tG,totalStk:sm.tS,savedAt:new Date().toISOString()});
- const idx=list.findIndex(o=>o.id===id);
- if(idx>=0) list[idx]=rec; else list.unshift(rec);
- saveOrders(list); editingOrderId=id; updateOrdersTag(); flashSaved();
+ const {doc,setDoc}=window.fbFns;
+ const btn=$('saveOrderBtn'); if(btn){ btn.disabled=true; btn.textContent='بيتحفظ...'; }
+ setDoc(doc(window.db,ORDERS_COLLECTION,id), rec)
+  .then(()=>{ editingOrderId=id; flashSaved(); })
+  .catch(e=>{ if(btn){ btn.disabled=false; btn.textContent='حفظ الأوردر'; } alert('حصل خطأ في الحفظ: '+e.message); });
 }
 
 function flashSaved(){
@@ -722,7 +775,7 @@ function applyState(state){
 }
 
 function openOrder(id){
- const rec=loadOrders().find(o=>o.id===id); if(!rec) return;
+ const rec=ordersCache.find(o=>o.id===id); if(!rec) return;
  editingOrderId=id; applyState(rec);
  go('order', document.querySelector('#nav .nav-i'));
 }
@@ -730,9 +783,11 @@ function openOrder(id){
 function deleteOrder(id,ev){
  if(ev) ev.stopPropagation();
  if(!confirm('هيمسح الأوردر ده نهائي، مش هينفع ترجعله. متأكد؟')) return;
- const list=loadOrders().filter(o=>o.id!==id);
- saveOrders(list); if(editingOrderId===id) editingOrderId=null;
- updateOrdersTag(); renderOrdersList();
+ if(!window.db || !window.fbFns) return;
+ const {doc,deleteDoc}=window.fbFns;
+ deleteDoc(doc(window.db,ORDERS_COLLECTION,id))
+  .then(()=>{ if(editingOrderId===id) editingOrderId=null; })
+  .catch(e=>alert('حصل خطأ في الحذف: '+e.message));
 }
 
 function newOrder(){
@@ -747,9 +802,14 @@ function newOrder(){
 }
 
 function renderOrdersList(){
- const list=loadOrders(); const cont=$('ordersList');
+ const list=ordersCache; const cont=$('ordersList');
+ if(!cont) return;
+ if(!ordersReady){
+  cont.innerHTML=`<div class="slot"><b>بيتحمل...</b><p>بنجيب الأوردرات المحفوظة من قاعدة البيانات.</p></div>`;
+  return;
+ }
  if(!list.length){
-  cont.innerHTML=`<div class="slot"><b>لسه مفيش أوردرات محفوظة</b><p>لما تحفظ أي أوردر من صفحة «أوردر الإنتاج» بزرار «حفظ الأوردر»، هيظهر هنا وتقدر تفتحه وتعدل عليه في أي وقت.</p></div>`;
+  cont.innerHTML=`<div class="slot"><b>لسه مفيش أوردرات محفوظة</b><p>لما تحفظ أي أوردر من صفحة «أوردر الإنتاج» بزرار «حفظ الأوردر»، هيظهر هنا وتقدر تفتحه وتعدل عليه في أي وقت، من أي جهاز.</p></div>`;
   return;
  }
  cont.innerHTML=`<div class="scroll"><table class="ord-table"><thead><tr>
