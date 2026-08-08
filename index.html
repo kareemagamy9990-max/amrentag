@@ -7,27 +7,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#1f2733;
-  --soft:#6b7480;
-  --line:#e6e9ee;
-  --bg:#f6f7f9;
-  --blue:#2f6fed;
-  --blue-l:#eef3fe;
+  --ink:#1c2431;
+  --soft:#727d8c;
+  --line:#e9ecf1;
+  --bg:#f7f8fa;
+  --blue:#3462e8;
+  --blue-l:#eef2fe;
   --green:#12805c;
   --red:#d14343;
-  --radius:10px;
+  --radius:12px;
 
-  /* مجموعات الأعمدة */
-  --g-in:#2f6fed;      --g-in-bg:#f4f8ff;    /* بيانات المنتج */
-  --g-out:#0e9aa7;     --g-out-bg:#f1fbfc;   /* الناتج المحسوب */
-  --g-stk:#e08b0a;     --g-stk-bg:#fff9ef;   /* الاستيكر */
-  --g-line:#8b5cf6;    --g-line-bg:#f9f6ff;  /* الخط والملاحظات */
+  /* مجموعات الأعمدة — تُستخدم كهوية تعريفية خفيفة، مش كتلوين كامل لكل خلية */
+  --g-in:#3462e8;      --g-in-bg:#f6f8fe;    /* بيانات المنتج */
+  --g-out:#0e8f9c;     --g-out-bg:#f2fafb;   /* الناتج المحسوب */
+  --g-stk:#c9790a;     --g-stk-bg:#fdf8ef;   /* الاستيكر */
+  --g-line:#7c5cd6;    --g-line-bg:#faf8ff;  /* الخط والملاحظات */
 }
 *{box-sizing:border-box}
 body{margin:0;padding:28px 18px;background:var(--bg);color:var(--ink);
-  font-family:"Cairo",system-ui,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
-.card{max-width:1320px;margin:auto;background:#fff;border-radius:14px;
-  box-shadow:0 1px 3px rgba(20,30,50,.06),0 8px 28px rgba(20,30,50,.06)}
+  font-family:"Cairo",system-ui,sans-serif;font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.card{max-width:1320px;margin:auto;background:#fff;border-radius:16px;
+  box-shadow:0 1px 2px rgba(20,30,50,.04),0 10px 30px rgba(20,30,50,.05)}
 
 /* header */
 .top{display:none}
@@ -35,11 +35,11 @@ body{margin:0;padding:28px 18px;background:var(--bg);color:var(--ink);
 .top p{margin:5px 0 0;color:var(--soft);font-size:13px}
 
 /* meta */
-.meta{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;padding:24px 26px 20px}
-.meta label{display:block;font-size:12px;color:var(--soft);margin-bottom:6px}
-.meta input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;
-  font-family:inherit;font-size:14px;color:var(--ink);background:#fff;transition:border-color .15s}
-.meta input:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-l)}
+.meta{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;padding:26px 28px 22px}
+.meta label{display:block;font-size:12.5px;color:var(--soft);margin-bottom:7px;font-weight:500}
+.meta input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;
+  font-family:inherit;font-size:14px;color:var(--ink);background:#fbfbfc;transition:border-color .15s,background .15s}
+.meta input:focus{outline:0;border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px var(--blue-l)}
 .meta input::placeholder{color:#b9bfc8}
 .dprint{display:none}
 .meta .dlv{position:relative}
@@ -52,78 +52,88 @@ body{margin:0;padding:28px 18px;background:var(--bg);color:var(--ink);
 .meta .dlv input.warn{border-color:var(--g-stk);background:#fffaf2}
 
 /* toolbar */
-.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:0 26px 16px;border-bottom:1px solid var(--line)}
-.bar .lbl{font-size:12px;color:var(--soft)}
-.seg{display:inline-flex;background:var(--bg);border-radius:8px;padding:3px}
-.seg button{border:0;background:transparent;padding:6px 14px;border-radius:6px;cursor:pointer;
+.bar{display:flex;align-items:center;gap:11px;flex-wrap:wrap;padding:2px 28px 18px;border-bottom:1px solid var(--line)}
+.bar .lbl{font-size:12.5px;color:var(--soft);font-weight:500}
+.seg{display:inline-flex;background:var(--bg);border-radius:9px;padding:3px}
+.seg button{border:0;background:transparent;padding:7px 15px;border-radius:7px;cursor:pointer;
   font-family:inherit;font-size:13px;color:var(--soft);transition:.15s}
-.seg button[aria-pressed="true"]{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
-.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(20,30,50,.1)}
+.chips{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
 .chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border-radius:20px;
-  padding:5px 8px 5px 11px;font-size:12.5px}
+  padding:6px 9px 6px 12px;font-size:12.5px;color:var(--ink)}
 .chip b{width:8px;height:8px;border-radius:50%}
 .chip button{border:0;background:none;color:#b9bfc8;cursor:pointer;font-size:14px;line-height:1;padding:0}
 .chip button:hover{color:var(--red)}
-.push{margin-inline-start:auto;display:flex;gap:8px}
-.btn{border:0;border-radius:8px;padding:8px 14px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+.push{margin-inline-start:auto;display:flex;gap:9px}
+.btn{border:0;border-radius:9px;padding:9px 16px;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;transition:.15s}
 .btn-p{background:var(--blue);color:#fff}
 .btn-s{background:var(--bg);color:var(--ink)}
 .btn-ok{background:var(--green);color:#fff}
 .btn:disabled{opacity:.7;cursor:default}
 .btn:hover{filter:brightness(.96)}
+.btn-p:hover{box-shadow:0 4px 10px rgba(52,98,232,.25)}
 
 /* table */
-.scroll{overflow-x:auto;padding:0 12px}
+.scroll{overflow-x:auto;padding:0 14px}
 table{width:100%;border-collapse:collapse;font-size:13.5px}
-thead th{font-size:11.5px;font-weight:600;color:var(--soft);text-align:center;padding:14px 6px;
+thead th{font-size:11.5px;font-weight:600;color:var(--soft);text-align:center;padding:12px 6px 14px;
   border-bottom:1px solid var(--line);white-space:nowrap}
-/* رأس ملون لكل مجموعة */
-thead th.g-in{color:var(--g-in);border-bottom:2px solid var(--g-in)}
-thead th.g-out{color:var(--g-out);border-bottom:2px solid var(--g-out)}
-thead th.g-stk{color:var(--g-stk);border-bottom:2px solid var(--g-stk)}
-thead th.g-line{color:var(--g-line);border-bottom:2px solid var(--g-line)}
-td.g-in input{background:var(--g-in-bg)}
-td.g-in input:focus{border-color:var(--g-in);box-shadow:0 0 0 3px rgba(47,111,237,.14);background:#fff}
+/* رأس مميز بخط سفلي رفيع بلون المجموعة فقط — بدون تلوين الخلفية */
+thead th.g-in{color:var(--ink);border-bottom:2px solid var(--g-in)}
+thead th.g-out{color:var(--ink);border-bottom:2px solid var(--g-out)}
+thead th.g-stk{color:var(--ink);border-bottom:2px solid var(--g-stk)}
+thead th.g-line{color:var(--ink);border-bottom:2px solid var(--g-line)}
+/* حقول الإدخال محايدة اللون في كل الأعمدة — بدون تلوين كل خلية علشان الجدول يفضل هادي ومريح */
+td.g-in input,td.g-stk input,td.g-line select{background:#fbfbfc}
+td.g-in input:focus,td.g-stk input:focus,td.g-line select:focus{background:#fff}
+/* الناتج المحسوب فقط بيتلوّن بخفة — علشان يتفرق عن الإدخال */
 td.g-out{background:var(--g-out-bg);color:var(--g-out)}
-td.g-stk input{background:var(--g-stk-bg)}
-td.g-stk input:focus{border-color:var(--g-stk);box-shadow:0 0 0 3px rgba(224,139,10,.16);background:#fff}
-td.g-stk.calc{background:var(--g-stk-bg);color:var(--g-stk)}
-td.g-line select{background:var(--g-line-bg)}
-td.g-line select:focus{border-color:var(--g-line);box-shadow:0 0 0 3px rgba(139,92,246,.14);background:#fff}
-/* شريط المجموعات */
-.band th{padding:0 4px 7px;border:0;font-size:10.5px;font-weight:700;letter-spacing:.3px}
-.band th span{display:block;border-radius:6px;padding:4px 0}
+/* عمود الاستيكر المدموج: المفتاح + الإجمالي مع بعض */
+td.stk-combo{background:var(--g-stk-bg)}
+td.stk-combo{display:table-cell}
+.stk-combo{padding:0 8px}
+.stk-combo .sw{justify-content:center}
+.stk-combo .stkT{display:block;font-size:12px;font-weight:600;color:var(--g-stk);margin-top:2px;font-variant-numeric:tabular-nums}
+.stk-combo .stkT.dim{color:#c7ccd4;font-weight:400}
+/* إخفاء عمودي "خط الإنتاج" و"ملاحظات" افتراضيًا لتقليل الزحمة — تتفعّل بالزرار */
+table.hide-extra .opt-col{display:none}
+.opt-hint{margin:10px 26px 0;font-size:12px;color:var(--soft)}
+.opt-hint b{color:var(--ink)}
+table:not(.hide-extra) ~ .opt-hint,.opt-hint.hide{display:none}
+/* شريط المجموعات — تلوين خفيف جدًا كعنوان قسم بس */
+.band th{padding:0 4px 8px;border:0;font-size:10.5px;font-weight:700;letter-spacing:.3px}
+.band th span{display:block;border-radius:6px;padding:5px 0}
 .band .b-in span{background:var(--g-in-bg);color:var(--g-in)}
 .band .b-out span{background:var(--g-out-bg);color:var(--g-out)}
 .band .b-stk span{background:var(--g-stk-bg);color:var(--g-stk)}
 .band .b-line span{background:var(--g-line-bg);color:var(--g-line)}
 
-td{padding:0;text-align:center;border-bottom:1px solid #f1f3f6;height:44px}
-tbody tr:hover{background:#fcfcfd}
-td input,td select{width:100%;height:38px;border:1px solid transparent;border-radius:7px;padding:0 6px;
+td{padding:0;text-align:center;border-bottom:1px solid #f1f3f6;height:48px}
+tbody tr:hover{background:#fafbfc}
+td input,td select{width:100%;height:40px;border:1px solid transparent;border-radius:8px;padding:0 8px;
   text-align:center;font-family:inherit;font-size:13.5px;color:var(--ink);background:transparent}
-td input:hover,td select:hover{filter:brightness(.975)}
-td input:focus,td select:focus{outline:0;background:#fff;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-l)}
-td input::placeholder{color:#ccd1d8}
+td input:hover,td select:hover{filter:brightness(.98)}
+td input:focus,td select:focus{outline:0;background:#fff!important;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-l)}
+td input::placeholder{color:#c2c8d1}
 td.desc{text-align:right}
 td.desc input{text-align:right;font-weight:600}
-td.notes input{text-align:right;font-size:12px;color:var(--soft)}
+td.notes input{text-align:right;font-size:12.5px;color:var(--soft)}
 td.calc{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
 td.calc small{display:block;font-size:11px;color:var(--soft);font-weight:400;margin-top:-1px}
-td.calc.dim,td.g-stk.calc.dim{color:#d8dce2;font-weight:400}
+td.calc.dim{color:#d8dce2;font-weight:400}
 td.no{color:#b9bfc8;font-size:12px;width:28px}
 td.grip{width:22px;color:#dde1e6;cursor:grab;user-select:none}
 tbody tr:hover .grip{color:#b9bfc8}
 tr.drag{opacity:.4}
 @media print{tbody tr.blank{display:none}}
 td.line-c{position:relative}
-td.line-c select{font-size:12.5px;font-weight:600;padding-inline-start:16px}
-td.line-c i{position:absolute;inset-inline-start:10px;top:50%;transform:translateY(-50%);
+td.line-c select{font-size:12.5px;font-weight:600;padding-inline-start:18px}
+td.line-c i{position:absolute;inset-inline-start:11px;top:50%;transform:translateY(-50%);
   width:7px;height:7px;border-radius:50%;pointer-events:none}
 .del{border:0;background:none;color:#dde1e6;cursor:pointer;font-size:16px;line-height:1;padding:4px}
 tbody tr:hover .del{color:#b9bfc8}
 .del:hover{color:var(--red)}
-tfoot td{border-top:1px solid var(--line);border-bottom:0;height:50px;font-weight:700;
+tfoot td{border-top:1px solid var(--line);border-bottom:0;height:52px;font-weight:700;
   font-variant-numeric:tabular-nums;font-size:14px}
 tfoot td.g-out{background:var(--g-out-bg);color:var(--g-out)}
 tfoot td.g-stk{background:var(--g-stk-bg);color:var(--g-stk)}
@@ -142,17 +152,18 @@ tfoot small{display:block;font-size:11px;color:var(--soft);font-weight:400}
 .sw input:checked~.t{color:var(--green);font-weight:600}
 
 /* sections */
-h3{margin:0;font-size:13px;font-weight:600;color:var(--soft)}
-.sec{padding:24px 26px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px}
-.tile{border:1px solid var(--line);border-radius:var(--radius);padding:14px 15px;
-  border-top:3px solid var(--tc,var(--line))}
+h3{margin:0;font-size:13.5px;font-weight:600;color:var(--ink)}
+.sec{padding:28px 28px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:14px}
+.tile{border:1px solid var(--line);border-radius:var(--radius);padding:16px 17px;
+  border-top:3px solid var(--tc,var(--line));transition:box-shadow .15s}
+.tile:hover{box-shadow:0 4px 14px rgba(20,30,50,.06)}
 .tile .v{color:var(--tc,var(--ink))}
-.tile .t{font-size:12px;color:var(--soft);display:flex;align-items:center;gap:6px}
+.tile .t{font-size:12px;color:var(--soft);display:flex;align-items:center;gap:6px;font-weight:500}
 .tile .t i{width:7px;height:7px;border-radius:50%}
-.tile .v{font-size:24px;font-weight:700;margin-top:8px;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
-.tile .u{font-size:11.5px;color:var(--soft);margin-top:3px}
-.tile .bar{height:4px;border-radius:4px;background:var(--bg);margin-top:10px;overflow:hidden}
+.tile .v{font-size:25px;font-weight:700;margin-top:9px;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.tile .u{font-size:11.5px;color:var(--soft);margin-top:4px}
+.tile .bar{height:4px;border-radius:4px;background:var(--bg);margin-top:11px;overflow:hidden}
 .tile .bar i{display:block;height:100%;border-radius:4px}
 .tile.hero{background:var(--ink);border-color:var(--ink);border-top-color:var(--ink);color:#fff}
 .tile.hero .v{color:#fff}
@@ -160,15 +171,15 @@ h3{margin:0;font-size:13px;font-weight:600;color:var(--soft)}
 .tile.empty{border-style:dashed}
 .tile.empty .v{color:#dde1e6!important}
 
-.hint{margin:22px 26px 0;background:var(--bg);border-radius:var(--radius);padding:13px 15px;
-  font-size:12.5px;color:var(--soft);line-height:1.9}
+.hint{margin:24px 28px 0;background:var(--bg);border-radius:var(--radius);padding:15px 17px;
+  font-size:12.5px;color:var(--soft);line-height:1.95}
 .hint b{color:var(--ink);font-weight:600}
-.hint code{background:#fff;border:1px solid var(--line);border-radius:5px;padding:1px 6px;
+.hint code{background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 7px;
   font-family:inherit;font-size:12px;color:var(--ink)}
-.acts{display:flex;justify-content:center;padding:24px 26px 28px}
-.btn-print{background:var(--ink);color:#fff;border:0;border-radius:9px;padding:11px 28px;
-  font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.btn-print:hover{background:#2c3745}
+.acts{display:flex;justify-content:center;padding:26px 28px 30px}
+.btn-print{background:var(--ink);color:#fff;border:0;border-radius:10px;padding:12px 30px;
+  font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:.15s}
+.btn-print:hover{background:#2c3745;box-shadow:0 6px 16px rgba(28,36,49,.2)}
 .sign{display:none}
 
 @media (max-width:1100px){.meta{grid-template-columns:repeat(3,1fr)}}
@@ -215,10 +226,12 @@ h3{margin:0;font-size:13px;font-weight:600;color:var(--soft)}
   td.desc{padding-inline-start:5px}
   td.desc input{font-weight:700;font-size:10.5px;text-overflow:ellipsis}
   thead th:nth-child(3){width:152px!important}   /* المنتج */
-  thead th:nth-child(9){width:80px!important}    /* استيكر */
-  thead th:nth-child(10){width:78px!important}   /* إجمالي الاستيكر */
-  thead th:nth-child(11){width:106px!important}  /* خط الإنتاج */
+  thead th:nth-child(9){width:110px!important}   /* استيكر (مدموج) */
+  thead th:nth-child(10){width:100px!important}  /* خط الإنتاج */
   thead th:last-child{width:auto}                /* ملاحظات الباقي */
+  /* الطباعة لازم تفضل تعرض كل الأعمدة (خط الإنتاج + ملاحظات) حتى لو مخفيين على الشاشة */
+  .opt-col{display:table-cell!important}
+  .opt-hint{display:none!important}
   td.notes{font-size:7.5px;color:#444;text-align:right;padding:0 3px;line-height:1.25}
   td.notes input{font-size:8.5px;color:#444;height:auto}
   td input::placeholder{color:transparent}   /* مايطبعش 0 وهمية */
@@ -226,6 +239,8 @@ h3{margin:0;font-size:13px;font-weight:600;color:var(--soft)}
   /* الأرقام المحسوبة تبان تقيلة */
   td.calc{font-weight:700;color:#000}
   td.calc small{font-size:8px}
+  .stk-combo .stkT{font-size:8.5px;font-weight:700;color:#000}
+  .stk-combo .stkT.dim{color:#999;font-weight:400}
 
   /* المفتاح يتحول لعلامة واضحة بدل بالونة رمادية */
   .sw .tr{display:none}
@@ -264,8 +279,8 @@ h3{margin:0;font-size:13px;font-weight:600;color:var(--soft)}
 
 /* ================= ERP SHELL ================= */
 :root{
-  --sb-w:236px; --sb-w-min:64px; --top-h:56px;
-  --nav-bg:#141a22; --nav-ink:#e7eaee; --nav-soft:#8b95a3; --nav-hover:#1f2833; --nav-line:#242d38;
+  --sb-w:240px; --sb-w-min:64px; --top-h:60px;
+  --nav-bg:#181f2b; --nav-ink:#e9ecf1; --nav-soft:#8993a4; --nav-hover:#232c3a; --nav-line:#28313f;
 }
 body.erp{padding:0;background:var(--bg)}
 .shell{display:flex;min-height:100vh}
@@ -331,10 +346,10 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
 .uname small{display:block;font-size:10.5px;color:var(--soft);font-weight:500}
 
 /* Page */
-.page{flex:1;padding:20px 22px 32px;min-width:0}
-.page-h{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:16px}
-.page-h h2{margin:0;font-size:19px;font-weight:700;letter-spacing:-.3px}
-.page-h p{margin:4px 0 0;font-size:12.5px;color:var(--soft)}
+.page{flex:1;padding:24px 26px 36px;min-width:0}
+.page-h{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.page-h h2{margin:0;font-size:20px;font-weight:700;letter-spacing:-.3px}
+.page-h p{margin:5px 0 0;font-size:12.5px;color:var(--soft);line-height:1.6}
 .status{display:inline-flex;align-items:center;gap:6px;background:#eaf6f1;color:var(--green);
   border-radius:20px;padding:4px 11px;font-size:11.5px;font-weight:600}
 .status i{width:6px;height:6px;border-radius:50%;background:currentColor}
@@ -383,7 +398,7 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
-    getFirestore, collection, doc, setDoc, deleteDoc,
+    getFirestore, collection, doc, setDoc, getDoc, deleteDoc,
     onSnapshot, query, orderBy
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -401,7 +416,7 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     window.db = db;
-    window.fbFns = { collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy };
+    window.fbFns = { collection, doc, setDoc, getDoc, deleteDoc, onSnapshot, query, orderBy };
     window.dispatchEvent(new Event('firebase-ready'));
   }catch(e){
     console.error('Firebase init failed:', e);
@@ -513,6 +528,7 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
     <span class="lbl" style="margin-inline-start:6px">الخطوط</span>
     <span class="chips" id="chips"></span>
     <button class="btn btn-s" onclick="addLine()">+ خط</button>
+    <button class="btn btn-s" id="toggleColsBtn" onclick="toggleExtraCols()">إظهار التصنيف والملاحظات</button>
     <span class="push">
       <button class="btn btn-p" onclick="addRow()">+ منتج</button>
       <button class="btn btn-ok" id="saveOrderBtn" onclick="saveOrder()">حفظ الأوردر</button>
@@ -521,14 +537,14 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
   </div>
 
   <div class="scroll">
-  <table>
+  <table id="prodTable" class="hide-extra">
     <thead>
       <tr class="band">
         <th colspan="2"></th>
         <th colspan="5" class="b-in"><span>بيانات المنتج</span></th>
         <th class="b-out"><span>الناتج</span></th>
-        <th colspan="2" class="b-stk"><span>الاستيكر</span></th>
-        <th colspan="2" class="b-line"><span>التصنيف</span></th>
+        <th class="b-stk"><span>الاستيكر</span></th>
+        <th colspan="2" class="b-line opt-col"><span>التصنيف والملاحظات</span></th>
         <th class="act"></th>
       </tr>
       <tr>
@@ -540,10 +556,9 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
         <th class="g-in" style="width:62px">وحدات</th>
         <th class="g-in" style="width:66px">كراتين</th>
         <th class="g-out" style="width:92px" id="thProd">الإنتاج (كجم)</th>
-        <th class="g-stk" style="width:104px">استيكر</th>
-        <th class="g-stk" style="width:96px">إجمالي الاستيكر</th>
-        <th class="g-line" style="width:112px">خط الإنتاج</th>
-        <th class="g-line">ملاحظات</th>
+        <th class="g-stk" style="width:120px">استيكر</th>
+        <th class="g-line opt-col" style="width:112px">خط الإنتاج</th>
+        <th class="g-line opt-col">ملاحظات</th>
         <th class="act" style="width:30px"></th>
       </tr>
     </thead>
@@ -552,13 +567,13 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
       <tr>
         <td colspan="7" class="flbl" style="text-align:right;padding-inline-start:12px">الإجمالي</td>
         <td id="tProd" class="g-out">0</td>
-        <td class="g-stk"></td>
         <td id="tStk" class="g-stk">0<small id="tStkN">—</small></td>
         <td colspan="3"></td>
       </tr>
     </tfoot>
   </table>
   </div>
+  <div class="opt-hint" id="optHint">فيه <b id="optCount">0</b> منتج عليهم خط إنتاج أو ملاحظات مختلفة — دوس «إظهار التصنيف والملاحظات» فوق لو محتاج تعدّلهم.</div>
 
   <div class="sec">
     <h3>خطوط الإنتاج</h3>
@@ -646,6 +661,14 @@ function setUnit(u){UNIT=u;
  [...$('seg').children].forEach(b=>b.setAttribute('aria-pressed',b.textContent===m[u]));
  $('thProd').textContent='الإنتاج ('+({kg:'كجم',ton:'طن',both:'كجم/طن'})[u]+')'; calc();}
 
+let extraColsShown=false;
+function toggleExtraCols(){
+ extraColsShown=!extraColsShown;
+ $('prodTable').classList.toggle('hide-extra',!extraColsShown);
+ $('toggleColsBtn').textContent = extraColsShown?'إخفاء التصنيف والملاحظات':'إظهار التصنيف والملاحظات';
+ $('optHint').classList.toggle('hide', extraColsShown);
+}
+
 const opts=sel=>LINES.map(l=>`<option ${l.n===sel?'selected':''}>${l.n}</option>`).join('');
 function chips(){$('chips').innerHTML=LINES.map((l,i)=>
  `<span class="chip"><b style="background:${l.c}"></b>${l.n}<button onclick="delLine(${i})" title="حذف">×</button></span>`).join('')}
@@ -670,10 +693,9 @@ function addRow(r={d:"",g:0,s:0,u:0,q:0,so:false,line:LINES[0].n,n:""}){
  <td class="g-in"><input type="number" min="0" class="u" value="${r.u||''}" placeholder="0"></td>
  <td class="g-in"><input type="number" min="0" class="q" value="${r.q||''}" placeholder="0"></td>
  <td class="calc g-out prod">0</td>
- <td class="g-stk"><label class="sw"><input type="checkbox" class="so" ${r.so?'checked':''}><span class="tr"></span><span class="t">بدون</span></label></td>
- <td class="calc g-stk stkT">—</td>
- <td class="line-c g-line"><i></i><select class="line">${opts(r.line)}</select></td>
- <td class="notes g-line"><input value="${r.n}" placeholder="—"></td>
+ <td class="g-stk stk-combo"><label class="sw"><input type="checkbox" class="so" ${r.so?'checked':''}><span class="tr"></span><span class="t">بدون</span></label><span class="calc stkT">—</span></td>
+ <td class="line-c g-line opt-col"><i></i><select class="line">${opts(r.line)}</select></td>
+ <td class="notes g-line opt-col"><input value="${r.n}" placeholder="—"></td>
  <td class="act"><button class="del" onclick="this.closest('tr').remove();calc()">×</button></td>`;
  body.appendChild(tr);
  tr.querySelectorAll('input,select').forEach(i=>{
@@ -689,8 +711,9 @@ function drag(tr){
   body.insertBefore(dg,(e.clientY-b.top)>b.height/2?tr.nextSibling:tr);});
 }
 
-/* ===== حفظ واسترجاع البيانات (localStorage) ===== */
+/* ===== حفظ واسترجاع البيانات (localStorage + مسودة سحابية أوتوماتيك) ===== */
 const STORE_KEY='erp_production_order_v1';
+const DRAFT_DOC_ID='autosave_draft'; // مستند ثابت في Firestore بيتحدث أول بأول بكل تعديل، من غير ما تحفظ الأوردر يدويًا
 function getState(){
  return{
   cust:$('cust').value, sales:$('sales').value, ono:$('ono').value,
@@ -707,8 +730,45 @@ function getState(){
   }))
  };
 }
-function saveState(){ try{ const s=getState(); s._editingOrderId=editingOrderId||null; localStorage.setItem(STORE_KEY, JSON.stringify(s)); }catch(e){} }
+let draftSaveTimer=null, draftLoadedOnce=false, suppressAutosave=false;
+function saveState(){
+ if(suppressAutosave) return;
+ try{
+  const s=getState(); s._editingOrderId=editingOrderId||null; s._savedAt=Date.now();
+  localStorage.setItem(STORE_KEY, JSON.stringify(s));
+  scheduleCloudDraftSave(s);
+ }catch(e){}
+}
 function loadState(){ try{ const raw=localStorage.getItem(STORE_KEY); return raw?JSON.parse(raw):null; }catch(e){ return null; } }
+
+function scheduleCloudDraftSave(state){
+ clearTimeout(draftSaveTimer);
+ draftSaveTimer=setTimeout(()=>{
+  if(!window.db || !window.fbFns) return;
+  const {doc,setDoc}=window.fbFns;
+  setDoc(doc(window.db,'app_state',DRAFT_DOC_ID), state).catch(e=>console.error('Autosave draft failed:',e));
+ },900);
+}
+
+function loadCloudDraftOnce(){
+ if(draftLoadedOnce || !window.db || !window.fbFns) return;
+ draftLoadedOnce=true;
+ const {doc,getDoc}=window.fbFns;
+ getDoc(doc(window.db,'app_state',DRAFT_DOC_ID)).then(snap=>{
+  if(!snap.exists()){ saveState(); return; } // مفيش مسودة سحابية لسه — نرفع النسخة اللي عندنا دلوقتي
+  const cloud=snap.data();
+  const local=loadState();
+  // ناخد الأحدث بين النسخة المحفوظة على الجهاز ده والنسخة على السيرفر، عشان لو فتحت من جهاز تاني تلاقي آخر حاجة كتبتها
+  if(!local || (cloud._savedAt||0) > (local._savedAt||0)){
+   suppressAutosave=true;
+   editingOrderId=cloud._editingOrderId||null;
+   applyState(cloud);
+   suppressAutosave=false;
+   saveState(); // نزامن الجهازين على نفس النسخة
+  }
+ }).catch(e=>console.error('Autosave draft load failed:',e));
+}
+window.addEventListener('firebase-ready', loadCloudDraftOnce);
 
 /* ===== قائمة الأوردرات المحفوظة (سحابيًا على Firebase - تتزامن على كل الأجهزة) ===== */
 const ORDERS_COLLECTION='production_orders';
@@ -835,7 +895,7 @@ function renderOrdersList(){
 function clearSaved(){ try{ localStorage.removeItem(STORE_KEY); }catch(e){} }
 
 function calc(){
- let tQ=0,tP=0,tG=0,tS=0,items=0,sRows=0; const L={};
+ let tQ=0,tP=0,tG=0,tS=0,items=0,sRows=0,noted=0; const L={};
  [...body.rows].forEach((tr,i)=>{
   tr.querySelector('.no').textContent=i+1;
   const g=num(tr.querySelector('.g').value), s=num(tr.querySelector('.s').value),
@@ -854,7 +914,9 @@ function calc(){
     ? f(grams/1000,2)+'<small>'+f(grams/1e6,3)+' طن</small>' : w(grams);
 
   const nEl=tr.querySelector('.notes');
-  nEl.dataset.v=nEl.querySelector('input').value.trim();
+  const noteVal=nEl.querySelector('input').value.trim();
+  nEl.dataset.v=noteVal;
+  if(noteVal) noted++;
 
   const blank = !tr.querySelector('.desc input').value.trim() && pcs===0 && grams===0;
   tr.classList.toggle('blank',blank);
@@ -862,6 +924,7 @@ function calc(){
   tQ+=q; tP+=pcs; tG+=grams; tS+=stk; if(pcs>0)items++; if(so)sRows++;
   L[line]=(L[line]||0)+grams;
  });
+ if($('optCount')) $('optCount').textContent=noted;
 
  $('tProd').innerHTML=UNIT==='both'?f(tG/1000,2)+'<small>'+f(tG/1e6,3)+' طن</small>':w(tG);
  $('tStk').innerHTML=f(tS,0)+'<small>'+(sRows?sRows+' أصناف':'—')+'</small>';
