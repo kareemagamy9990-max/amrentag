@@ -685,7 +685,7 @@ function delLine(i){ if(LINES.length<=1)return; const nm=LINES[i].n;
 function refresh(){[...body.rows].forEach(r=>{const s=r.querySelector('.line');
  s.innerHTML=opts(LINES.some(l=>l.n===s.value)?s.value:LINES[0].n);}); chips(); calc();}
 
-function addRow(r={d:"",g:0,s:0,u:0,q:0,so:false,line:LINES[0].n,n:""}){
+function addRow(r={d:"",g:0,s:0,u:0,q:0,so:false,exp:"",line:LINES[0].n,n:""}){
  const tr=document.createElement('tr'); tr.draggable=true;
  tr.innerHTML=`
  <td class="grip">⠿</td>
@@ -696,7 +696,7 @@ function addRow(r={d:"",g:0,s:0,u:0,q:0,so:false,line:LINES[0].n,n:""}){
  <td class="g-in"><input type="number" min="0" class="u" value="${r.u||''}" placeholder="0"></td>
  <td class="g-in"><input type="number" min="0" class="q" value="${r.q||''}" placeholder="0"></td>
  <td class="calc g-out prod">0</td>
- <td class="g-stk stk-combo"><label class="sw"><input type="checkbox" class="so" ${r.so?'checked':''}><span class="tr"></span><span class="t">بدون</span></label><span class="calc stkT">—</span></td>
+ <td class="g-stk stk-combo"><label class="sw"><input type="checkbox" class="so" ${r.so?'checked':''}><span class="tr"></span><span class="t">بدون</span></label><span class="calc stkT">—</span><input type="date" class="exp" value="${r.exp||''}" title="تاريخ صلاحية الاستيكر" style="display:${r.so?'block':'none'};margin-top:4px;width:100%;font-size:11px;padding:3px 4px;border:1px solid var(--line);border-radius:6px;"></td>
  <td class="line-c g-line opt-col"><i></i><select class="line">${opts(r.line)}</select></td>
  <td class="notes g-line opt-col"><input value="${r.n}" placeholder="—"></td>
  <td class="act"><button class="del" onclick="this.closest('tr').remove();calc()">×</button></td>`;
@@ -728,6 +728,7 @@ function getState(){
    u:num(tr.querySelector('.u').value),
    q:num(tr.querySelector('.q').value),
    so:tr.querySelector('.so').checked,
+   exp:tr.querySelector('.exp').value,
    line:tr.querySelector('.line').value,
    n:tr.querySelector('.notes input').value
   }))
@@ -924,6 +925,8 @@ function calc(){
   const stk=so?pcs:0;
   const c=tr.querySelector('.stkT');
   c.textContent=so?f(stk,0):'—'; c.classList.toggle('dim',!so);
+  const expEl=tr.querySelector('.exp');
+  if(expEl) expEl.style.display = so ? 'block' : 'none';
   tr.querySelector('.line-c i').style.background=lc(line);
 
   tr.querySelector('.prod').innerHTML=UNIT==='both'
