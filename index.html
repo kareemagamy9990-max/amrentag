@@ -35,7 +35,7 @@ body{margin:0;padding:28px 18px;background:var(--bg);color:var(--ink);
 .top p{margin:5px 0 0;color:var(--soft);font-size:13px}
 
 /* meta */
-.meta{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;padding:26px 28px 22px}
+.meta{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;padding:26px 28px 22px}
 .meta label{display:block;font-size:12.5px;color:var(--soft);margin-bottom:7px;font-weight:500}
 .meta input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;
   font-family:inherit;font-size:14px;color:var(--ink);background:#fbfbfc;transition:border-color .15s,background .15s}
@@ -517,6 +517,7 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
     <div><label>رقم الأوردر</label><input id="ono" placeholder="مثال: 001"></div>
     <div class="dlv"><label for="due">تاريخ التسليم</label><input type="date" id="due"><span class="dprint" id="dueP"></span>
       <span class="due-note" id="dueN"></span></div>
+    <div><label>تاريخ التحميل</label><input type="date" id="loadDt"><span class="dprint" id="loadDtP"></span></div>
   </div>
 
   <div class="bar">
@@ -723,7 +724,7 @@ const DRAFT_DOC_ID='autosave_draft'; // مستند ثابت في Firestore بي�
 function getState(){
  return{
   cust:$('cust').value, sales:$('sales').value, ono:$('ono').value,
-  dt:$('dt').value, due:$('due').value, unit:UNIT, lines:LINES,
+  dt:$('dt').value, due:$('due').value, loadDt:$('loadDt').value, unit:UNIT, lines:LINES,
   rows:[...body.rows].map(tr=>({
    d:tr.querySelector('.desc input').value,
    g:num(tr.querySelector('.g').value),
@@ -833,6 +834,7 @@ function applyState(state){
  $('cust').value=state.cust||''; $('sales').value=state.sales||''; $('ono').value=state.ono||'';
  if(state.dt) $('dt').value=state.dt; else $('dt').valueAsDate=new Date();
  if(state.due) $('due').value=state.due; else{const d=new Date(); d.setDate(d.getDate()+7); $('due').valueAsDate=d;}
+ if(state.loadDt) $('loadDt').value=state.loadDt; else $('loadDt').value='';
  if(Array.isArray(state.lines)&&state.lines.length) LINES=state.lines;
  chips();
  body.innerHTML='';
@@ -860,7 +862,7 @@ function deleteOrder(id,ev){
 function newOrder(){
  if(!confirm('هيفتحلك أوردر جديد فاضي. الأوردر الحالي محفوظ عندك لو كنت حفظته قبل كده. تمام؟')) return;
  editingOrderId=null; body.innerHTML='';
- ['cust','sales','ono'].forEach(i=>$(i).value='');
+ ['cust','sales','ono','loadDt'].forEach(i=>$(i).value='');
  $('dt').valueAsDate=new Date();
  {const d=new Date(); d.setDate(d.getDate()+7); $('due').valueAsDate=d;}
  dueCheck();
@@ -977,6 +979,8 @@ function doPrint(){
  $('dtP').textContent = d ? new Date(d).toLocaleDateString('en-GB') : '................';
  const dv=$('due').value;
  $('dueP').textContent = dv ? new Date(dv).toLocaleDateString('en-GB') : '................';
+ const ld=$('loadDt').value;
+ $('loadDtP').textContent = ld ? new Date(ld).toLocaleDateString('en-GB') : '................';
  ['cust','sales','ono'].forEach(id=>{ const el=$(id);
    if(!el.value.trim()) el.placeholder='................'; });
  window.print();
