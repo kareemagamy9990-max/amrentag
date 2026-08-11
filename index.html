@@ -700,7 +700,7 @@ function addRow(r={d:"",g:0,s:0,u:0,q:0,so:false,exp:"",line:LINES[0].n,n:""}){
  <td class="g-in"><input type="number" min="0" class="q" value="${r.q||''}" placeholder="0"></td>
  <td class="calc g-out prod">0</td>
  <td class="g-stk stk-combo"><label class="sw"><input type="checkbox" class="so" ${r.so?'checked':''}><span class="tr"></span><span class="t">بدون</span></label><span class="calc stkT">—</span></td>
- <td class="g-stk exp-cell"><input type="date" class="exp" value="${r.exp||''}" title="تاريخ صلاحية الاستيكر" style="width:100%;font-size:12px;padding:6px 4px;border:1px solid var(--line);border-radius:7px;text-align:center;display:${r.so?'block':'none'};"><span class="exp-dash muted" style="display:${r.so?'none':'block'};text-align:center;">—</span></td>
+ <td class="g-stk exp-cell"><input type="date" class="exp" value="${r.exp||''}" title="تاريخ الصلاحية" style="width:100%;font-size:12px;padding:6px 4px;border:1px solid var(--line);border-radius:7px;text-align:center;"></td>
  <td class="line-c g-line opt-col"><i></i><select class="line">${opts(r.line)}</select></td>
  <td class="notes g-line opt-col"><input value="${r.n}" placeholder="—"></td>
  <td class="act"><button class="del" onclick="this.closest('tr').remove();calc()">×</button></td>`;
@@ -930,10 +930,6 @@ function calc(){
   const stk=so?pcs:0;
   const c=tr.querySelector('.stkT');
   c.textContent=so?f(stk,0):'—'; c.classList.toggle('dim',!so);
-  const expEl=tr.querySelector('.exp');
-  const expDash=tr.querySelector('.exp-dash');
-  if(expEl){ expEl.style.display = so ? 'block' : 'none'; }
-  if(expDash){ expDash.style.display = so ? 'none' : 'block'; }
   tr.querySelector('.line-c i').style.background=lc(line);
 
   tr.querySelector('.prod').innerHTML=UNIT==='both'
