@@ -604,7 +604,10 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
       <section class="view" id="v-orders" hidden>
         <div class="page-h">
           <div><h2>الأوردرات المحفوظة</h2><p>كل الأوردرات اللي حفظتها. افتح أي واحد للتعديل، أو ابدأ أوردر جديد.</p></div>
-          <span class="push"><button class="btn btn-p" onclick="newOrder()">+ أوردر جديد</button></span>
+          <span class="push">
+            <button class="btn btn-s" onclick="exportOrdersJSON()">⬇ تصدير كل الأوردرات (JSON)</button>
+            <button class="btn btn-p" onclick="newOrder()">+ أوردر جديد</button>
+          </span>
         </div>
         <div class="card" style="padding:8px 22px 22px">
           <div id="ordersList"></div>
@@ -859,6 +862,19 @@ function newOrder(){
  dueCheck();
  for(let i=0;i<5;i++) addRow();
  go('order', document.querySelector('#nav .nav-i'));
+}
+
+function exportOrdersJSON(){
+  const data = JSON.stringify(ordersCache, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'production_orders_export_' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function renderOrdersList(){
