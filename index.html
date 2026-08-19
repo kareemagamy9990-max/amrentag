@@ -530,7 +530,7 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
     <span class="lbl" style="margin-inline-start:6px">الخطوط</span>
     <span class="chips" id="chips"></span>
     <button class="btn btn-s" onclick="addLine()">+ خط</button>
-    <button class="btn btn-s" id="toggleColsBtn" onclick="toggleExtraCols()">إظهار التصنيف والملاحظات</button>
+    <button class="btn btn-s" id="toggleColsBtn" onclick="toggleExtraCols()">إخفاء التصنيف والملاحظات</button>
     <span class="push">
       <button class="btn btn-p" onclick="addRow()">+ منتج</button>
       <button class="btn btn-ok" id="saveOrderBtn" onclick="saveOrder()">حفظ الأوردر</button>
@@ -539,7 +539,7 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
   </div>
 
   <div class="scroll">
-  <table id="prodTable" class="hide-extra">
+  <table id="prodTable">
     <thead>
       <tr class="band">
         <th colspan="2"></th>
@@ -667,7 +667,7 @@ function setUnit(u){UNIT=u;
  [...$('seg').children].forEach(b=>b.setAttribute('aria-pressed',b.textContent===m[u]));
  $('thProd').textContent='الإنتاج ('+({kg:'كجم',ton:'طن',both:'كجم/طن'})[u]+')'; calc();}
 
-let extraColsShown=false;
+let extraColsShown=true;
 function toggleExtraCols(){
  extraColsShown=!extraColsShown;
  $('prodTable').classList.toggle('hide-extra',!extraColsShown);
