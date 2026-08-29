@@ -35,7 +35,7 @@ body{margin:0;padding:28px 18px;background:var(--bg);color:var(--ink);
 .top p{margin:5px 0 0;color:var(--soft);font-size:13px}
 
 /* meta */
-.meta{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;padding:26px 28px 22px}
+.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 20px;padding:26px 28px 22px}
 .meta label{display:block;font-size:12.5px;color:var(--soft);margin-bottom:7px;font-weight:500}
 .meta input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;
   font-family:inherit;font-size:14px;color:var(--ink);background:#fbfbfc;transition:border-color .15s,background .15s}
@@ -117,7 +117,8 @@ td input:focus,td select:focus{outline:0;background:#fff!important;border-color:
 td input::placeholder{color:#c2c8d1}
 td.desc{text-align:right}
 td.desc input{text-align:right;font-weight:600}
-td.notes input{text-align:right;font-size:12.5px;color:var(--soft)}
+td.notes input{text-align:right;font-size:13px;font-weight:600;color:var(--ink);background:var(--g-line-bg);height:44px;padding:0 12px}
+td.notes{min-width:280px}
 td.calc{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
 td.calc small{display:block;font-size:11px;color:var(--soft);font-weight:400;margin-top:-1px}
 td.calc.dim{color:#d8dce2;font-weight:400}
@@ -227,14 +228,13 @@ h3{margin:0;font-size:13.5px;font-weight:600;color:var(--ink)}
   td.desc input{font-weight:700;font-size:10.5px;text-overflow:ellipsis}
   thead th:nth-child(3){width:152px!important}   /* المنتج */
   thead th:nth-child(9){width:100px!important}   /* استيكر */
-  thead th:nth-child(10){width:95px!important}   /* تاريخ الصلاحية */
-  thead th:nth-child(11){width:100px!important}  /* خط الإنتاج */
+  thead th:nth-child(10){width:100px!important}  /* خط الإنتاج */
   thead th:last-child{width:auto}                /* ملاحظات الباقي */
   /* الطباعة لازم تفضل تعرض كل الأعمدة (خط الإنتاج + ملاحظات) حتى لو مخفيين على الشاشة */
   .opt-col{display:table-cell!important}
   .opt-hint{display:none!important}
-  td.notes{font-size:7.5px;color:#444;text-align:right;padding:0 3px;line-height:1.25}
-  td.notes input{font-size:8.5px;color:#444;height:auto}
+  td.notes{font-size:10.5px;color:#000;text-align:right;padding:0 3px;line-height:1.3}
+  td.notes input{font-size:11.5px;font-weight:700;color:#000;height:auto;background:transparent!important}
   td input::placeholder{color:transparent}   /* مايطبعش 0 وهمية */
 
   /* الأرقام المحسوبة تبان تقيلة */
@@ -512,12 +512,14 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
 
   <div class="meta">
     <div><label>اسم العميل</label><input id="cust" placeholder="اكتب اسم العميل"></div>
+    <div><label>البلد</label><input id="country" placeholder="اكتب اسم البلد"></div>
     <div><label>اسم السيلز</label><input id="sales" placeholder="اكتب اسم السيلز"></div>
     <div><label>التاريخ</label><input type="date" id="dt"><span class="dprint" id="dtP"></span></div>
     <div><label>رقم الأوردر</label><input id="ono" placeholder="مثال: 001"></div>
     <div class="dlv"><label for="due">تاريخ التسليم</label><input type="date" id="due"><span class="dprint" id="dueP"></span>
       <span class="due-note" id="dueN"></span></div>
     <div><label>تاريخ التحميل</label><input type="date" id="loadDt"><span class="dprint" id="loadDtP"></span></div>
+    <div><label>تاريخ الصلاحية</label><input type="date" id="expAll"><span class="dprint" id="expAllP"></span></div>
   </div>
 
   <div class="bar">
@@ -545,7 +547,7 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
         <th colspan="2"></th>
         <th colspan="5" class="b-in"><span>بيانات المنتج</span></th>
         <th class="b-out"><span>الناتج</span></th>
-        <th colspan="2" class="b-stk"><span>الاستيكر</span></th>
+        <th class="b-stk"><span>الاستيكر</span></th>
         <th colspan="2" class="b-line opt-col"><span>التصنيف والملاحظات</span></th>
         <th class="act"></th>
       </tr>
@@ -559,7 +561,6 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
         <th class="g-in" style="width:66px">كراتين</th>
         <th class="g-out" style="width:92px" id="thProd">الإنتاج (كجم)</th>
         <th class="g-stk" style="width:110px">استيكر</th>
-        <th class="g-stk" style="width:110px">تاريخ الصلاحية</th>
         <th class="g-line opt-col" style="width:112px">خط الإنتاج</th>
         <th class="g-line opt-col">ملاحظات</th>
         <th class="act" style="width:30px"></th>
@@ -571,7 +572,7 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
         <td colspan="7" class="flbl" style="text-align:right;padding-inline-start:12px">الإجمالي</td>
         <td id="tProd" class="g-out">0</td>
         <td id="tStk" class="g-stk">0<small id="tStkN">—</small></td>
-        <td colspan="4"></td>
+        <td colspan="3"></td>
       </tr>
     </tfoot>
   </table>
@@ -688,7 +689,7 @@ function delLine(i){ if(LINES.length<=1)return; const nm=LINES[i].n;
 function refresh(){[...body.rows].forEach(r=>{const s=r.querySelector('.line');
  s.innerHTML=opts(LINES.some(l=>l.n===s.value)?s.value:LINES[0].n);}); chips(); calc();}
 
-function addRow(r={d:"",g:0,s:0,u:0,q:0,so:false,exp:"",line:LINES[0].n,n:""}){
+function addRow(r={d:"",g:0,s:0,u:0,q:0,so:false,line:LINES[0].n,n:""}){
  const tr=document.createElement('tr'); tr.draggable=true;
  tr.innerHTML=`
  <td class="grip">⠿</td>
@@ -700,7 +701,6 @@ function addRow(r={d:"",g:0,s:0,u:0,q:0,so:false,exp:"",line:LINES[0].n,n:""}){
  <td class="g-in"><input type="number" min="0" class="q" value="${r.q||''}" placeholder="0"></td>
  <td class="calc g-out prod">0</td>
  <td class="g-stk stk-combo"><label class="sw"><input type="checkbox" class="so" ${r.so?'checked':''}><span class="tr"></span><span class="t">بدون</span></label><span class="calc stkT">—</span></td>
- <td class="g-stk exp-cell"><input type="date" class="exp" value="${r.exp||''}" title="تاريخ الصلاحية" style="width:100%;font-size:12px;padding:6px 4px;border:1px solid var(--line);border-radius:7px;text-align:center;"></td>
  <td class="line-c g-line opt-col"><i></i><select class="line">${opts(r.line)}</select></td>
  <td class="notes g-line opt-col"><input value="${r.n}" placeholder="—"></td>
  <td class="act"><button class="del" onclick="this.closest('tr').remove();calc()">×</button></td>`;
@@ -723,8 +723,8 @@ const STORE_KEY='erp_production_order_v1';
 const DRAFT_DOC_ID='autosave_draft'; // مستند ثابت في Firestore بيتحدث أول بأول بكل تعديل، من غير ما تحفظ الأوردر يدويًا
 function getState(){
  return{
-  cust:$('cust').value, sales:$('sales').value, ono:$('ono').value,
-  dt:$('dt').value, due:$('due').value, loadDt:$('loadDt').value, unit:UNIT, lines:LINES,
+  cust:$('cust').value, country:$('country').value, sales:$('sales').value, ono:$('ono').value,
+  dt:$('dt').value, due:$('due').value, loadDt:$('loadDt').value, expAll:$('expAll').value, unit:UNIT, lines:LINES,
   rows:[...body.rows].map(tr=>({
    d:tr.querySelector('.desc input').value,
    g:num(tr.querySelector('.g').value),
@@ -732,7 +732,6 @@ function getState(){
    u:num(tr.querySelector('.u').value),
    q:num(tr.querySelector('.q').value),
    so:tr.querySelector('.so').checked,
-   exp:tr.querySelector('.exp').value,
    line:tr.querySelector('.line').value,
    n:tr.querySelector('.notes input').value
   }))
@@ -831,10 +830,11 @@ function flashSaved(){
 }
 
 function applyState(state){
- $('cust').value=state.cust||''; $('sales').value=state.sales||''; $('ono').value=state.ono||'';
+ $('cust').value=state.cust||''; $('country').value=state.country||''; $('sales').value=state.sales||''; $('ono').value=state.ono||'';
  if(state.dt) $('dt').value=state.dt; else $('dt').valueAsDate=new Date();
  if(state.due) $('due').value=state.due; else{const d=new Date(); d.setDate(d.getDate()+7); $('due').valueAsDate=d;}
  if(state.loadDt) $('loadDt').value=state.loadDt; else $('loadDt').value='';
+ $('expAll').value=state.expAll||'';
  if(Array.isArray(state.lines)&&state.lines.length) LINES=state.lines;
  chips();
  body.innerHTML='';
@@ -895,7 +895,7 @@ function renderOrdersList(){
   return;
  }
  cont.innerHTML=`<div class="scroll"><table class="ord-table"><thead><tr>
-   <th>رقم الأوردر</th><th>العميل</th><th>السيلز</th><th>التاريخ</th><th>التسليم</th>
+   <th>رقم الأوردر</th><th>العميل</th><th>البلد</th><th>السيلز</th><th>التاريخ</th><th>التسليم</th>
    <th>الإنتاج</th><th>الاستيكر</th><th>آخر حفظ</th><th></th>
  </tr></thead><tbody>${list.map(o=>{
    const sm={tG:o.totalProd||0,tS:o.totalStk||0};
@@ -903,6 +903,7 @@ function renderOrdersList(){
    return `<tr onclick="openOrder('${o.id}')" style="cursor:pointer">
      <td>${o.ono?esc(o.ono):'—'}</td>
      <td>${o.cust?esc(o.cust):'—'}</td>
+     <td>${o.country?esc(o.country):'—'}</td>
      <td>${o.sales?esc(o.sales):'—'}</td>
      <td>${o.dt?new Date(o.dt+'T00:00:00').toLocaleDateString('en-GB'):'—'}</td>
      <td>${o.due?new Date(o.due+'T00:00:00').toLocaleDateString('en-GB'):'—'}</td>
@@ -984,7 +985,7 @@ function doPrint(){
 
 function clearAll(){ if(!confirm('هيمسح كل المنتجات ويبدأ أوردر جديد. تمام؟'))return;
  editingOrderId=null;
- body.innerHTML=''; ['cust','sales','ono','due'].forEach(i=>$(i).value=''); dueCheck();
+ body.innerHTML=''; ['cust','country','sales','ono','due','loadDt','expAll'].forEach(i=>$(i).value=''); dueCheck();
  for(let i=0;i<5;i++) addRow();}
 
 function dueCheck(){
