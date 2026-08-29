@@ -39,7 +39,10 @@ body{margin:0;padding:28px 18px;background:var(--bg);color:var(--ink);
 .meta label{display:block;font-size:12.5px;color:var(--soft);margin-bottom:7px;font-weight:500}
 .meta input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;
   font-family:inherit;font-size:14px;color:var(--ink);background:#fbfbfc;transition:border-color .15s,background .15s}
+.meta select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;
+  font-family:inherit;font-size:14px;color:var(--ink);background:#fbfbfc;transition:border-color .15s,background .15s;cursor:pointer}
 .meta input:focus{outline:0;border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px var(--blue-l)}
+.meta select:focus{outline:0;border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px var(--blue-l)}
 .meta input::placeholder{color:#b9bfc8}
 .dprint{display:none}
 .meta .dlv{position:relative}
@@ -205,6 +208,7 @@ h3{margin:0;font-size:13.5px;font-weight:600;color:var(--ink)}
   .meta label{margin:0;font-size:10.5px;color:#666}
   .meta label::after{content:":"}
   .meta input{border:0;padding:0;width:auto;min-width:70px;font-weight:700;font-size:12px;color:#000}
+  .meta select{display:none}
   .meta input[type=date]{display:none}
   .meta .dprint{display:inline!important;font-weight:700;font-size:12px}
   .due-note{display:none!important}
@@ -519,7 +523,12 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
     <div class="dlv"><label for="due">تاريخ التسليم</label><input type="date" id="due"><span class="dprint" id="dueP"></span>
       <span class="due-note" id="dueN"></span></div>
     <div><label>تاريخ التحميل</label><input type="date" id="loadDt"><span class="dprint" id="loadDtP"></span></div>
-    <div><label>تاريخ الصلاحية</label><input type="date" id="expAll"><span class="dprint" id="expAllP"></span></div>
+    <div><label>تاريخ الصلاحية</label><select id="expAll">
+      <option value="">اختر المدة</option>
+      <option value="1y">سنة</option>
+      <option value="1.5y">سنة ونص</option>
+      <option value="2y">سنتين</option>
+    </select><span class="dprint" id="expAllP"></span></div>
   </div>
 
   <div class="bar">
@@ -978,7 +987,9 @@ function doPrint(){
  $('dueP').textContent = dv ? new Date(dv).toLocaleDateString('en-GB') : '................';
  const ld=$('loadDt').value;
  $('loadDtP').textContent = ld ? new Date(ld).toLocaleDateString('en-GB') : '................';
- ['cust','sales','ono'].forEach(id=>{ const el=$(id);
+ const ex=$('expAll'), exT=ex.options[ex.selectedIndex]?ex.options[ex.selectedIndex].textContent:'';
+ $('expAllP').textContent = ex.value ? exT : '................';
+ ['cust','country','sales','ono'].forEach(id=>{ const el=$(id);
    if(!el.value.trim()) el.placeholder='................'; });
  window.print();
 }
