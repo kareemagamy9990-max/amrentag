@@ -395,6 +395,20 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
   .page{padding:0}
 }
 
+
+/* ================= تبويبات أوردر الإنتاج + أمر المكرونة ================= */
+.subtabs{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:10px;padding:3px;margin-bottom:16px}
+.subtabs button{border:0;background:transparent;padding:8px 18px;border-radius:8px;cursor:pointer;
+  font-family:inherit;font-size:13.5px;color:var(--soft);transition:.15s}
+.subtabs button[aria-pressed="true"]{background:var(--blue);color:#fff;font-weight:600}
+#pTable th.g-pl{color:var(--ink);border-bottom:2px solid #b45309}
+#pTable td.pline{color:#b45309;font-weight:700;font-size:12.5px}
+.p-list{padding-bottom:26px}
+@media print{
+  .subtabs,.p-list{display:none!important}
+  #pTable thead th{width:auto!important}
+  #pTable thead th:nth-child(2){width:190px!important}
+}
 </style>
 
 <!-- ============================================
@@ -450,6 +464,10 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
       <button class="nav-i" onclick="go('orders',this)">
         <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         <span class="lbl">الأوردرات المحفوظة</span><span class="tag" id="ordersTag">0</span>
+      </button>
+      <button class="nav-i" id="navPasta" onclick="go('pasta',this)">
+        <svg viewBox="0 0 24 24"><path d="M3 11h18a8 8 0 0 1-8 8h-2a8 8 0 0 1-8-8z"/><path d="M7 11V5M11 11V3M15 11V5M19 11V7"/></svg>
+        <span class="lbl">أمر إنتاج مكرونة</span><span class="tag" id="pastaTag">0</span>
       </button>
       <button class="nav-i" disabled aria-disabled="true">
         <svg viewBox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
@@ -616,6 +634,77 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
 </div>
       </section>
 
+      <section class="view" id="v-pasta" hidden>
+        <div class="page-h">
+          <div><h2>أمر إنتاج مكرونة</h2><p>دخّل حجم العبوة والوحدات والكراتين، والنظام يطلعلك المفروض تنتج كام كيلو.</p></div>
+          <span class="push status" id="pStatus"><i></i>مسودة</span>
+        </div>
+
+        <div class="card">
+          <div class="meta">
+            <div><label>رقم الأمر</label><input id="pNo" placeholder="مثال: M-001"></div>
+            <div><label>التاريخ</label><input type="date" id="pDt"><span class="dprint" id="pDtP"></span></div>
+            <div><label>اسم العميل</label><input id="pCust" placeholder="اختياري"></div>
+            <div><label>تاريخ التسليم</label><input type="date" id="pDue"><span class="dprint" id="pDueP"></span></div>
+          </div>
+
+          <div class="bar">
+            <span class="lbl">خط الإنتاج: <b style="color:#b45309">مكرونة</b></span>
+            <span class="push">
+              <button class="btn btn-p" onclick="pAddRow()">+ صنف</button>
+              <button class="btn btn-ok" id="pSaveBtn" onclick="pSave()">حفظ الأمر</button>
+              <button class="btn btn-s" onclick="pNew()">أمر جديد</button>
+            </span>
+          </div>
+
+          <div class="scroll">
+          <table id="pTable">
+            <thead><tr>
+              <th style="width:28px"></th>
+              <th class="g-in" style="width:200px;text-align:right;padding-inline-start:12px">الصنف</th>
+              <th class="g-in" style="width:96px">حجم العبوة (جم)</th>
+              <th class="g-in" style="width:90px">وحدات / كرتونة</th>
+              <th class="g-in" style="width:80px">كراتين</th>
+              <th class="g-out" style="width:120px">الإنتاج (كجم)</th>
+              <th class="g-pl" style="width:100px">خط الإنتاج</th>
+              <th class="g-line">ملاحظات</th>
+              <th class="act" style="width:30px"></th>
+            </tr></thead>
+            <tbody id="pBody"></tbody>
+            <tfoot><tr>
+              <td colspan="4" class="flbl" style="text-align:right;padding-inline-start:12px">الإجمالي</td>
+              <td id="pTCart">0<small>كرتونة</small></td>
+              <td id="pTKg" class="g-out">0</td>
+              <td colspan="3"></td>
+            </tr></tfoot>
+          </table>
+          </div>
+
+          <div class="sec">
+            <h3>إجمالي أمر المكرونة</h3>
+            <div class="grid">
+              <div class="tile hero"><div class="t">المفروض تنتج</div><div class="v" id="pcKg">0</div><div class="u" id="pcKgU">كجم</div></div>
+              <div class="tile" style="--tc:var(--g-in)"><div class="t"><i style="background:var(--g-in)"></i>الكراتين</div><div class="v" id="pcCart">0</div><div class="u">كرتونة</div></div>
+              <div class="tile" style="--tc:#b45309"><div class="t"><i style="background:#b45309"></i>العبوات</div><div class="v" id="pcPcs">0</div><div class="u">عبوة</div></div>
+              <div class="tile" style="--tc:var(--g-line)"><div class="t"><i style="background:var(--g-line)"></i>الأصناف</div><div class="v" id="pcItems">0</div><div class="u">صنف</div></div>
+            </div>
+          </div>
+
+          <div class="hint">
+            <b>الحساب:</b> الإنتاج (كجم) = <code>حجم العبوة بالجرام × وحدات الكرتونة × عدد الكراتين ÷ 1000</code>
+            — مثال: عبوة 400 جم × 20 وحدة × 100 كرتونة = 800 كجم.
+          </div>
+
+          <div class="acts"><button class="btn-print" onclick="pPrint()">طباعة أمر المكرونة</button></div>
+          <div class="sign"><div>السيلز</div><div>مسئول الإنتاج</div><div>مدير المصنع</div></div>
+
+          <div class="sec p-list">
+            <h3>أوامر المكرونة المحفوظة</h3>
+            <div id="pList" style="margin-top:12px"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="view" id="v-orders" hidden>
         <div class="page-h">
           <div><h2>الأوردرات المحفوظة</h2><p>كل الأوردرات اللي حفظتها. افتح أي واحد للتعديل، أو ابدأ أوردر جديد.</p></div>
@@ -634,12 +723,15 @@ body.mini .nav-i span.lbl,body.mini .nav-i .tag{display:none}
 
 <script>
 function go(view,btn){
-  document.querySelectorAll('#nav .nav-i').forEach(b=>b.removeAttribute('aria-current'));
-  if(btn) btn.setAttribute('aria-current','page');
-  document.getElementById('v-order').hidden = view!=='order';
-  document.getElementById('v-orders').hidden = view!=='orders';
-  document.getElementById('crumb').textContent = view==='orders' ? 'الأوردرات المحفوظة' : 'أوردر الإنتاج';
+  const navs=document.querySelectorAll('#nav .nav-i');
+  navs.forEach(b=>b.removeAttribute('aria-current'));
+  const nb = btn || (view==='orders' ? navs[1] : view==='pasta' ? document.getElementById('navPasta') : navs[0]);
+  if(nb) nb.setAttribute('aria-current','page');
+  ['order','orders','pasta'].forEach(v=>{ const el=document.getElementById('v-'+v); if(el) el.hidden = v!==view; });
+  document.getElementById('crumb').textContent =
+    view==='orders' ? 'الأوردرات المحفوظة' : view==='pasta' ? 'أمر إنتاج مكرونة' : 'أوردر الإنتاج';
   if(view==='orders') renderOrdersList();
+  if(view==='pasta' && typeof pRenderList==='function') pRenderList();
   document.body.classList.remove('open');
 }
 document.getElementById('q').addEventListener('input',e=>{
@@ -648,6 +740,11 @@ document.getElementById('q').addEventListener('input',e=>{
     const d=r.querySelector('.desc input').value.toLowerCase();
     const l=r.querySelector('.line').value.toLowerCase();
     r.style.display = !t || d.includes(t) || l.includes(t) ? '' : 'none';
+  });
+  const pb=document.getElementById('pBody');
+  if(pb) [...pb.rows].forEach(r=>{
+    const d=r.querySelector('.pd').value.toLowerCase();
+    r.style.display = !t || d.includes(t) || 'مكرونة'.includes(t) ? '' : 'none';
   });
 });
 </script>
@@ -1037,6 +1134,195 @@ $('due').addEventListener('input',dueCheck);
  if(saved) editingOrderId=saved._editingOrderId||null;
  applyState(saved || {cust:'',sales:'',ono:'',dt:'',due:'',unit:'kg',lines:LINES,rows:SAMPLE});
  updateOrdersTag();
+})();
+</script>
+<script>
+/* =====================================================================
+   أمر إنتاج المكرونة — تخزين منفصل تمامًا عن أوردر الحلويات:
+   مفتاح localStorage جديد + مسودة سحابية جديدة + Collection جديدة.
+   مش بيقرأ ولا بيكتب على أي بيانات قديمة.
+===================================================================== */
+const P_STORE_KEY='erp_pasta_order_v1';
+const P_DRAFT_DOC='autosave_pasta_draft';
+const P_COLL='pasta_orders';
+const P_LINE='مكرونة';
+const pBody=$('pBody');
+let pEditingId=null, pCache=[], pReady=false, pSuppress=false, pTimer=null, pDraftLoaded=false;
+
+function pAddRow(r={d:'',s:0,u:0,q:0,n:''}){
+ const tr=document.createElement('tr');
+ tr.innerHTML=`
+ <td class="no"></td>
+ <td class="desc g-in"><input class="pd" value="${esc(r.d)}" placeholder="مثال: مكرونة قلم"></td>
+ <td class="g-in"><input type="number" min="0" class="ps" value="${r.s||''}" placeholder="0"></td>
+ <td class="g-in"><input type="number" min="0" class="pu" value="${r.u||''}" placeholder="0"></td>
+ <td class="g-in"><input type="number" min="0" class="pq" value="${r.q||''}" placeholder="0"></td>
+ <td class="calc g-out pkg">0</td>
+ <td class="pline">${P_LINE}</td>
+ <td class="notes g-line"><input class="pn" value="${esc(r.n)}" placeholder="—"></td>
+ <td class="act"><button class="del" title="حذف" onclick="this.closest('tr').remove();pCalc()">×</button></td>`;
+ pBody.appendChild(tr);
+ tr.querySelectorAll('input').forEach(i=>i.addEventListener('input',pCalc));
+ pCalc();
+}
+
+function pGetState(){
+ return{
+  ono:$('pNo').value, dt:$('pDt').value, cust:$('pCust').value, due:$('pDue').value, line:P_LINE,
+  rows:[...pBody.rows].map(tr=>({
+   d:tr.querySelector('.pd').value,
+   s:num(tr.querySelector('.ps').value),
+   u:num(tr.querySelector('.pu').value),
+   q:num(tr.querySelector('.pq').value),
+   n:tr.querySelector('.pn').value
+  }))
+ };
+}
+function pTotalKg(st){ return (st.rows||[]).reduce((a,r)=>a+(r.s||0)*(r.u||0)*(r.q||0)/1000,0); }
+
+function pCalc(){
+ let tKg=0,tC=0,tPcs=0,items=0;
+ [...pBody.rows].forEach((tr,i)=>{
+  tr.querySelector('.no').textContent=i+1;
+  const s=num(tr.querySelector('.ps').value), u=num(tr.querySelector('.pu').value), q=num(tr.querySelector('.pq').value);
+  const pcs=u*q, kg=s*pcs/1000;
+  const c=tr.querySelector('.pkg');
+  c.innerHTML = kg>0 ? f(kg,2)+'<small>'+f(kg/1000,3)+' طن</small>' : '0';
+  c.classList.toggle('dim',kg===0);
+  tr.classList.toggle('blank', !tr.querySelector('.pd').value.trim() && pcs===0 && s===0);
+  tKg+=kg; tC+=q; tPcs+=pcs; if(kg>0) items++;
+ });
+ $('pTKg').innerHTML=f(tKg,2)+'<small>'+f(tKg/1000,3)+' طن</small>';
+ $('pTCart').innerHTML=f(tC,0)+'<small>كرتونة</small>';
+ $('pcKg').textContent=f(tKg,2);
+ $('pcKgU').textContent='كجم · '+f(tKg/1000,3)+' طن';
+ $('pcCart').textContent=f(tC,0);
+ $('pcPcs').textContent=f(tPcs,0);
+ $('pcItems').textContent=items;
+ pSaveState();
+}
+
+/* ---- مسودة أوتوماتيك (على الجهاز + السحابة) ---- */
+function pSaveState(){
+ if(pSuppress) return;
+ try{
+  const st=pGetState(); st._editingId=pEditingId||null; st._savedAt=Date.now();
+  localStorage.setItem(P_STORE_KEY, JSON.stringify(st));
+  clearTimeout(pTimer);
+  pTimer=setTimeout(()=>{
+   if(!window.db||!window.fbFns) return;
+   const {doc,setDoc}=window.fbFns;
+   setDoc(doc(window.db,'app_state',P_DRAFT_DOC),st).catch(e=>console.error('Pasta draft save failed:',e));
+  },900);
+ }catch(e){}
+}
+function pLoadLocal(){ try{ const r=localStorage.getItem(P_STORE_KEY); return r?JSON.parse(r):null; }catch(e){ return null; } }
+
+function pApply(st){
+ st=st||{};
+ pSuppress=true;
+ $('pNo').value=st.ono||''; $('pCust').value=st.cust||'';
+ if(st.dt) $('pDt').value=st.dt; else $('pDt').valueAsDate=new Date();
+ $('pDue').value=st.due||'';
+ pBody.innerHTML='';
+ const rows=Array.isArray(st.rows)&&st.rows.length?st.rows:[{},{},{}];
+ rows.forEach(r=>pAddRow(Object.assign({d:'',s:0,u:0,q:0,n:''},r)));
+ pCalc();
+ pSuppress=false;
+}
+
+function pLoadCloudDraft(){
+ if(pDraftLoaded||!window.db||!window.fbFns) return;
+ pDraftLoaded=true;
+ const {doc,getDoc}=window.fbFns;
+ getDoc(doc(window.db,'app_state',P_DRAFT_DOC)).then(snap=>{
+  if(!snap.exists()) return;
+  const cloud=snap.data(), local=pLoadLocal();
+  if(!local || (cloud._savedAt||0)>(local._savedAt||0)){
+   pEditingId=cloud._editingId||null; pApply(cloud); pSaveState();
+  }
+ }).catch(e=>console.error('Pasta draft load failed:',e));
+}
+
+/* ---- الأوامر المحفوظة (Collection منفصلة: pasta_orders) ---- */
+function pInitListener(){
+ if(!window.db||!window.fbFns) return;
+ const {collection,onSnapshot,query,orderBy}=window.fbFns;
+ onSnapshot(query(collection(window.db,P_COLL),orderBy('savedAt','desc')), snap=>{
+  pCache=snap.docs.map(d=>d.data()); pReady=true; pRenderList(); $('pastaTag').textContent=pCache.length;
+ }, err=>{
+  console.error('Pasta orders listen error:',err);
+  $('pList').innerHTML=`<div class="slot"><b>مقدرناش نجيب أوامر المكرونة</b><p>اتأكد إن قواعد Firestore بتسمح بالقراءة والكتابة على «${P_COLL}».</p></div>`;
+ });
+}
+window.addEventListener('firebase-ready',()=>{ pLoadCloudDraft(); pInitListener(); });
+
+function pSave(){
+ if(!window.db||!window.fbFns){ alert('لسه الاتصال بقاعدة البيانات مش جاهز، جرب تاني بعد ثانية.'); return; }
+ const st=pGetState();
+ const id=pEditingId||('m'+Date.now());
+ const rec=Object.assign({},st,{id,totalKg:pTotalKg(st),savedAt:new Date().toISOString()});
+ const {doc,setDoc}=window.fbFns, btn=$('pSaveBtn');
+ btn.disabled=true; btn.textContent='بيتحفظ...';
+ setDoc(doc(window.db,P_COLL,id),rec).then(()=>{
+  pEditingId=id; pSaveState();
+  btn.textContent='اتحفظ ✓';
+  setTimeout(()=>{ btn.textContent='حفظ الأمر'; btn.disabled=false; },1200);
+ }).catch(e=>{ btn.textContent='حفظ الأمر'; btn.disabled=false; alert('حصل خطأ في الحفظ: '+e.message); });
+}
+
+function pNew(){
+ if(!confirm('هيفتح أمر مكرونة جديد فاضي. الأمر الحالي محفوظ لو كنت دوست «حفظ الأمر». تمام؟')) return;
+ pEditingId=null; pApply({}); pSaveState();
+}
+
+function pOpen(id){
+ const rec=pCache.find(o=>o.id===id); if(!rec) return;
+ pEditingId=id; pApply(rec); pSaveState(); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function pDelete(id,ev){
+ if(ev) ev.stopPropagation();
+ if(!confirm('هيمسح أمر المكرونة ده نهائي، مش هينفع ترجعله. متأكد؟')) return;
+ const {doc,deleteDoc}=window.fbFns;
+ deleteDoc(doc(window.db,P_COLL,id)).then(()=>{ if(pEditingId===id) pEditingId=null; })
+  .catch(e=>alert('حصل خطأ في الحذف: '+e.message));
+}
+
+function pRenderList(){
+ const cont=$('pList'); if(!cont) return;
+ if(!pReady){ cont.innerHTML='<p class="ord-empty-hint">بيتحمل...</p>'; return; }
+ if(!pCache.length){ cont.innerHTML='<p class="ord-empty-hint">لسه مفيش أوامر مكرونة محفوظة — دوس «حفظ الأمر» فوق وهيظهر هنا.</p>'; return; }
+ cont.innerHTML=`<div class="scroll" style="padding:0"><table class="ord-table"><thead><tr>
+   <th>رقم الأمر</th><th>العميل</th><th>التاريخ</th><th>التسليم</th><th>الإنتاج</th><th>آخر حفظ</th><th></th>
+ </tr></thead><tbody>${pCache.map(o=>{
+   const sv=new Date(o.savedAt);
+   return `<tr onclick="pOpen('${o.id}')" style="cursor:pointer">
+     <td>${o.ono?esc(o.ono):'—'}</td>
+     <td>${o.cust?esc(o.cust):'—'}</td>
+     <td>${o.dt?new Date(o.dt+'T00:00:00').toLocaleDateString('en-GB'):'—'}</td>
+     <td>${o.due?new Date(o.due+'T00:00:00').toLocaleDateString('en-GB'):'—'}</td>
+     <td>${f(o.totalKg||0,2)} كجم</td>
+     <td>${sv.toLocaleDateString('ar-EG',{day:'numeric',month:'short'})} · ${sv.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})}</td>
+     <td><button class="btn btn-s" onclick="event.stopPropagation();pOpen('${o.id}')">فتح للتعديل</button>
+         <button class="del" title="حذف" onclick="pDelete('${o.id}',event)">×</button></td>
+   </tr>`;}).join('')}</tbody></table></div>`;
+}
+
+function pPrint(){
+ const d=$('pDt').value, dv=$('pDue').value;
+ $('pDtP').textContent = d ? new Date(d+'T00:00:00').toLocaleDateString('en-GB') : '................';
+ $('pDueP').textContent = dv ? new Date(dv+'T00:00:00').toLocaleDateString('en-GB') : '................';
+ ['pNo','pCust'].forEach(id=>{ if(!$(id).value.trim()) $(id).placeholder='................'; });
+ window.print();
+}
+
+['pNo','pDt','pCust','pDue'].forEach(id=>{ $(id).addEventListener('input',pSaveState); $(id).addEventListener('change',pSaveState); });
+
+(function pInit(){
+ const saved=pLoadLocal();
+ if(saved) pEditingId=saved._editingId||null;
+ pApply(saved||{});
 })();
 </script>
 </body>
